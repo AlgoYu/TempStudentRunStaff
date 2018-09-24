@@ -1,5 +1,6 @@
 package com.example.xiaoyu.tempstudentrunstaff.activity;
 
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -15,9 +16,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Spinner;
 
-import com.example.xiaoyu.tempstudentrunstaff.adapter.DingdanAdapter;
 import com.example.xiaoyu.tempstudentrunstaff.App;
 import com.example.xiaoyu.tempstudentrunstaff.R;
+import com.example.xiaoyu.tempstudentrunstaff.adapter.DingdanAdapter;
 import com.example.xiaoyu.tempstudentrunstaff.entity.Order;
 import com.example.xiaoyu.tempstudentrunstaff.entity.ResponseTemplate;
 import com.example.xiaoyu.tempstudentrunstaff.entity.Staff;
@@ -83,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void initData() {
 
-        String url = "http://192.168.0.105:8080/Api/Order?key=" + ACache.get(App.app).getAsString("miyao");
+        String url = "http://studentrun.club:8080/xiaoyu/Api/Order?key=" + ACache.get(App.app).getAsString("miyao");
         Request request = new Request.Builder().url(url).get().build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
@@ -142,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .writeTimeout(5, TimeUnit.SECONDS)//设置写的超时时间
                 .connectTimeout(5, TimeUnit.SECONDS)//设置连接超时时间
                 .build();
-        String url = "ws://192.168.0.105:8080/WebSocketConnection/staff";
+        String url = "ws://studentrun.club:8080/xiaoyu/WebSocketConnection/staff";
         mWebSocketListener = new MyWebSocketListener();
         Request request = new Request.Builder().url(url).build();
         webSocket = okHttpClient.newWebSocket(request,mWebSocketListener);
@@ -154,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mDialog.show();
         String s = mSpSushelou.getSelectedItem().toString();
 
-        String url = "http://192.168.0.105:8080/Api/OrderByRidgepole?key=" + ACache.get(App.app).getAsString("miyao") + "&ridgepole=" + s;
+        String url = "http://studentrun.club:8080/xiaoyu/Api/OrderByRidgepole?key=" + ACache.get(App.app).getAsString("miyao") + "&ridgepole=" + s;
         Log.e("筛选查询地址:", url);
         Request request = new Request.Builder().url(url).get().build();
         okHttpClient.newCall(request).enqueue(new Callback() {

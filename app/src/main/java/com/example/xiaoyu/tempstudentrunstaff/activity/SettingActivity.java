@@ -58,7 +58,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
             XUtils.ShowToast("请输入完整信息！");
         }else{
             OkHttpClient okHttpClient = new OkHttpClient();
-            Request request = new Request.Builder().url("http://192.168.0.105:8080/Api/Miyao").get().build();
+            Request request = new Request.Builder().url("http://studentrun.club:8080/xiaoyu/Api/Miyao").get().build();
             okHttpClient.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
@@ -69,33 +69,44 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 public void onResponse(Call call, Response response) throws IOException {
                     String temp = response.body().string();
                     Log.e("查看返回的数据",temp);
-                    final ResponseTemplate<String> message = new Gson().fromJson(temp,new TypeToken<ResponseTemplate<String>>(){}.getType());
-                    final String miyao = message.getData();
-                    if(miyao.equals(mEdMiyao.getText().toString())){
-                        ACache.get(App.app).put("miyao",message.getData());
-                        ACache.get(App.app).put("name",mEdName.getText().toString());
-                        ACache.get(App.app).put("phone",mEdPhone.getText().toString());
-                        ACache.get(App.app).put("miyao",miyao);
-                        ACache.get(App.app).put("run",true,60*60*24);
+                    try{
+                        final ResponseTemplate<String> message = new Gson().fromJson(temp,new TypeToken<ResponseTemplate<String>>(){}.getType());
+                        final String miyao = message.getData();
+                        if(miyao.equals(mEdMiyao.getText().toString())){
+                            ACache.get(App.app).put("miyao",message.getData());
+                            ACache.get(App.app).put("name",mEdName.getText().toString());
+                            ACache.get(App.app).put("phone",mEdPhone.getText().toString());
+                            ACache.get(App.app).put("miyao",miyao);
+                            ACache.get(App.app).put("run",true,60*60*24);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    XUtils.ShowToast("验证成功！");
+                                    startActivity(new Intent(SettingActivity.this,MainActivity.class));
+                                    finish();
+                                }
+                            });
+                            Log.e("秘钥是否缓存!",ACache.get(App.app).getAsString("miyao"));
+                            Log.e("姓名是否缓存!",ACache.get(App.app).getAsString("name"));
+                            Log.e("手机号否缓存!",ACache.get(App.app).getAsString("phone"));
+                        }else{
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    XUtils.ShowToast("密钥验证错误！");
+                                }
+                            });
+                        }
+                    }catch (Exception e){
+                        Log.e("验证出错",e.toString());
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                XUtils.ShowToast("验证成功！");
-                                startActivity(new Intent(SettingActivity.this,MainActivity.class));
-                                finish();
-                            }
-                        });
-                        Log.e("秘钥是否缓存!",ACache.get(App.app).getAsString("miyao"));
-                        Log.e("姓名是否缓存!",ACache.get(App.app).getAsString("name"));
-                        Log.e("手机号否缓存!",ACache.get(App.app).getAsString("phone"));
-                    }else{
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                XUtils.ShowToast("密钥验证错误！");
+                                XUtils.ShowToast("验证出错！");
                             }
                         });
                     }
+
                 }
             });
         }
