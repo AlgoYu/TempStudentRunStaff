@@ -1,6 +1,7 @@
 package com.example.xiaoyu.tempstudentrunstaff.adapter;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -38,11 +39,13 @@ public class DingdanAdapter extends RecyclerView.Adapter<DingdanAdapter.DingdanV
     LayoutInflater mLayoutInflater;
     OkHttpClient mOkHttpClient;
     Gson mGson;
+    String name = null;
 
     public DingdanAdapter(LayoutInflater layoutInflater) {
         mLayoutInflater = layoutInflater;
         mOkHttpClient = new OkHttpClient();
         mGson = new Gson();
+        name = ACache.get(App.app).getAsString("name");
     }
 
     public void setDatas(List<Order> datas) {
@@ -60,14 +63,25 @@ public class DingdanAdapter extends RecyclerView.Adapter<DingdanAdapter.DingdanV
     @Override
     public void onBindViewHolder(@NonNull final DingdanViewHolder holder, int position) {
         final Integer location = position;
-        holder.dingdanhao.setText("订单编号："+ datas.get(position).getId());
-        holder.dingdanshijian.setText("订单时间："+ datas.get(position).getDatetime());
-        holder.dingdanneirong.setText(datas.get(position).getInfo());
-        holder.dingdanzhuangtai.setText(datas.get(position).getStaff()!=null?"配送人员:"+datas.get(position).getStaff()+"\t联系方式:"+datas.get(position).getPhone():"配送人员：暂无");
-        holder.dizhi.setText("配送地址:"+datas.get(position).getRidgepole()+"栋"+datas.get(position).getDorm()+"寝室");
+        Order order = datas.get(position);
+        holder.dingdanhao.setText("订单编号："+ order.getId());
+        holder.dingdanshijian.setText("订单时间："+ order.getDatetime());
+        holder.dingdanneirong.setText(order.getInfo());
+        if(order.getStaff()!=null){
+            holder.dingdanzhuangtai.setText("配送人员："+order.getStaff());
+            if(order.getStaff().equals(name)){
+                holder.dingdanzhuangtai.setTextColor(Color.RED);
+            }
+        }else{
+            holder.dingdanhao.setTextColor(Color.RED);
+            holder.dingdanzhuangtai.setText("配送人员：暂无");
+        }
+//        holder.dingdanzhuangtai.setText(datas.get(position).getStaff()!=null?"配送人员:"+datas.get(position).getStaff()+"\t联系方式:"+datas.get(position).getPhone():"配送人员：暂无");
+
+        holder.dizhi.setText("配送地址:"+order.getRidgepole()+"栋"+order.getDorm()+"寝室");
         //Log.e("查看数据真假值","订单号:"+datas.get(position).getId()+"订单按钮真假:"+datas.get(position).getBt_flag()+"订单状态:"+datas.get(position).getFlag());
-        holder.lianxidianhua.setText("联系电话："+datas.get(position).getContact()+"");
-        if(datas.get(position).getFlag()>0){
+        holder.lianxidianhua.setText("联系电话："+order.getContact()+"");
+        if(order.getFlag()>0){
             holder.accept.setVisibility(View.INVISIBLE);
         }else{
             holder.accept.setVisibility(View.VISIBLE);
